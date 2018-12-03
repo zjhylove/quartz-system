@@ -377,7 +377,7 @@ public interface QuartzJDBCConstants extends Constants {
             + COL_TRIGGER_GROUP + " = ? AND T." + COL_JOB_NAME + " = J."
             + COL_JOB_NAME + " AND T." + COL_JOB_GROUP + " = J."
             + COL_JOB_GROUP + " AND T." + COL_SCHED_NAME + " = J." + COL_SCHED_NAME
-            + "AND " + SCHED_NAME_CONDITION;
+            + " AND " + SCHED_NAME_CONDITION;
 
     String SELECT_TRIGGER = "SELECT *" + " FROM "
             + TABLE_PREFIX_SUBST + TABLE_TRIGGERS + " WHERE "
