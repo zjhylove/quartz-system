@@ -24,7 +24,7 @@ public interface QuartzJDBCConstants extends Constants {
     /**
      * 添加任务唯一标识 ，一般为当前工程名
      */
-    String SCHED_NAME_CONDITION = " SCHED_NAME={1} ";
+    String SCHED_NAME_CONDITION = "SCHED_NAME={1} ";
 
     //system flag
     String COL_SCHED_NAME = "SCHED_NAME";
@@ -377,7 +377,7 @@ public interface QuartzJDBCConstants extends Constants {
             + COL_TRIGGER_GROUP + " = ? AND T." + COL_JOB_NAME + " = J."
             + COL_JOB_NAME + " AND T." + COL_JOB_GROUP + " = J."
             + COL_JOB_GROUP + " AND T." + COL_SCHED_NAME + " = J." + COL_SCHED_NAME
-            + "AND " + SCHED_NAME_CONDITION;
+            + " AND  T." + SCHED_NAME_CONDITION;
 
     String SELECT_TRIGGER = "SELECT *" + " FROM "
             + TABLE_PREFIX_SUBST + TABLE_TRIGGERS + " WHERE "

@@ -626,7 +626,7 @@ public class MethodInvokingJobDetailFactoryBean implements FactoryBean,
 		}
 	}
 
-	public static class StatefulMethodInvokingJob extends MethodInvokingJob
+	public static class StatefulMethodInvokingJob extends SendQuartJob
 			implements StatefulJob {
 		// No additional functionality; just needs to implement StatefulJob.
 	}
