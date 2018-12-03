@@ -3,7 +3,7 @@
  * 版本 core-0.4.0_Beta
  * Copyright 2013 北京壹平台科技有限公司 
  */
-package com.quartz.system.web;
+package com.quartz.system.base;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

@@ -9,4 +9,8 @@ import org.springframework.stereotype.Component;
 @Component("job1")
 public class Job1 extends JobBase {
 
+    @Override
+    public void run() {
+        super.run();
+    }
 }

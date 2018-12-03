@@ -6,7 +6,7 @@ package com.quartz.system.web.job;
  */
 public abstract class JobBase {
 
-    protected void run(){
+    public void run(){
         System.out.println("定时任务" + this + "正在执行");
     }
 }

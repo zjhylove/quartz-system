@@ -28,6 +28,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <!--引用数据源，里面包含了quartz用到的12张数据库表-->
         <property name="dataSource" ref="dataSource" />
+        <property name="schedulerName" value="test_sch"/>
         <!--以key/value的方式存放在了quartz的上下文中-->
         <property name="applicationContextSchedulerContextKey" value="springContext"/>
         <!--指明quartz的配置文件的位置 -->
@@ -47,7 +48,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <!--job1-->
     <bean id="jobDetail_1" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
-        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="jobClass" value="com.quartz.system.base.SendQuartJob"/>
         <property name="shouldRecover" value="false"/>
         <property name="concurrent" value="false"/>
         <property name="jobDataAsMap">
@@ -65,7 +66,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <!--job2-->
     <bean id="jobDetail_2" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
-        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="jobClass" value="com.quartz.system.base.SendQuartJob"/>
         <property name="shouldRecover" value="false"/>
         <property name="concurrent" value="false"/>
         <property name="jobDataAsMap">
@@ -83,7 +84,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <!--job3-->
     <bean id="jobDetail_3" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
-        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="jobClass" value="com.quartz.system.base.SendQuartJob"/>
         <property name="shouldRecover" value="false"/>
         <property name="concurrent" value="false"/>
         <property name="jobDataAsMap">
@@ -101,7 +102,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <!--job4-->
     <bean id="jobDetail_4" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
-        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="jobClass" value="com.quartz.system.base.SendQuartJob"/>
         <property name="shouldRecover" value="false"/>
         <property name="concurrent" value="false"/>
         <property name="jobDataAsMap">
