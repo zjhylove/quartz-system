@@ -10,7 +10,6 @@
     <modules>
         <module>quartz-core</module>
         <module>quartz-web</module>
-        <module>quartz-web</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -30,11 +29,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>commons-dbutils</groupId>
-                <artifactId>commons-dbutils</artifactId>
-                <version>1.6</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant</artifactId>
@@ -219,11 +213,6 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
@@ -242,13 +231,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectj.version}</version>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -428,11 +410,6 @@
                 <artifactId>junit</artifactId>
                 <version>4.9</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
-                <version>4.4.1</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>

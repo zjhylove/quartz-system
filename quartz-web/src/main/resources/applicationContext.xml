@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    <aop:aspectj-autoproxy/>
+
+    <!--spring会按照这个包路径进行扫描 -->
+    <context:component-scan base-package="com.quartz.system.web"/>
+
+    <!-- 时区-->
+    <bean id="timeZone" class="java.util.TimeZone" factory-method="getTimeZone">
+        <constructor-arg value="GMT+8"/>
+    </bean>
+
+    <!-- 数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@10.4.3.100:1521:monitornew"/>
+        <property name="username" value="sdmonitor"/>
+        <property name="password" value="monitor"/>
+    </bean>
+
+    <!-- 定时任务-->
+    <bean name="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!--引用数据源，里面包含了quartz用到的12张数据库表-->
+        <property name="dataSource" ref="dataSource" />
+        <!--以key/value的方式存放在了quartz的上下文中-->
+        <property name="applicationContextSchedulerContextKey" value="springContext"/>
+        <!--指明quartz的配置文件的位置 -->
+        <property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="overwriteExistingJobs" value="true"/>
+        <!--定时任务列表-->
+        <property name="triggers">
+            <list>
+                <!--设置定时任务触发列表-->
+                <ref bean="trigger_1"/>
+                <ref bean="trigger_2"/>
+                <ref bean="trigger_3"/>
+                <ref bean="trigger_4"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--job1-->
+    <bean id="jobDetail_1" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
+        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="shouldRecover" value="false"/>
+        <property name="concurrent" value="false"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="job1"/>
+                <entry key="targetMethod" value="run"/>
+            </map>
+        </property>
+    </bean>
+    <!-- 每两秒执行一次-->
+    <bean id="trigger_1" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="jobDetail_1"/>
+        <property name="cronExpression" value="0/2 * * * * ? *"/>
+    </bean>
+
+    <!--job2-->
+    <bean id="jobDetail_2" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
+        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="shouldRecover" value="false"/>
+        <property name="concurrent" value="false"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="job2"/>
+                <entry key="targetMethod" value="run"/>
+            </map>
+        </property>
+    </bean>
+    <!-- 每分钟执行一次-->
+    <bean id="trigger_2" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="jobDetail_2"/>
+        <property name="cronExpression" value="0 0/1 * * * ? "/>
+    </bean>
+
+    <!--job3-->
+    <bean id="jobDetail_3" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
+        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="shouldRecover" value="false"/>
+        <property name="concurrent" value="false"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="job3"/>
+                <entry key="targetMethod" value="run"/>
+            </map>
+        </property>
+    </bean>
+    <!-- 每45秒执行一次-->
+    <bean id="trigger_3" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="jobDetail_3"/>
+        <property name="cronExpression" value="0/45 * * * * ? "/>
+    </bean>
+
+    <!--job4-->
+    <bean id="jobDetail_4" class="com.quartz.system.base.MethodInvokingJobDetailFactoryBean">
+        <property name="jobClass" value="com.quartz.system.web.SendQuartJob"/>
+        <property name="shouldRecover" value="false"/>
+        <property name="concurrent" value="false"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="job4"/>
+                <entry key="targetMethod" value="run"/>
+            </map>
+        </property>
+    </bean>
+    <!-- 每30秒执行一次-->
+    <bean id="trigger_4" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="jobDetail_4"/>
+        <property name="cronExpression" value="0/30 * * * * ? *"/>
+    </bean>
+
+
+</beans>

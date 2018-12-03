@@ -5,7 +5,6 @@ import org.quartz.*;
 import org.quartz.impl.jdbcjobstore.DriverDelegate;
 import org.quartz.impl.jdbcjobstore.FiredTriggerRecord;
 import org.quartz.impl.jdbcjobstore.SchedulerStateRecord;
-import org.quartz.impl.jdbcjobstore.Util;
 import org.quartz.spi.ClassLoadHelper;
 import org.quartz.utils.Key;
 import org.quartz.utils.TriggerStatus;
@@ -40,28 +39,6 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
 
     protected boolean useProperties;
 
-    protected static final String SYSTEM_NAME_KEY = "org.quartz.scheduler.systemName";
-    protected static String systemName;
-
-    static {
-        String fileName = "quartz.properties";
-        Properties props;
-        InputStream is;
-        try {
-            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
-            if (is == null) {
-                throw new FileNotFoundException(fileName + "file is not found");
-            }
-            props = new Properties();
-            props.load(is);
-            systemName = (String) props.get(SYSTEM_NAME_KEY);
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
     /*
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      *
@@ -75,10 +52,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Create new StdJDBCDelegate instance.
      * </p>
      *
-     * @param logger
-     *          the logger to use during execution
-     * @param tablePrefix
-     *          the prefix of all table names
+     * @param logger      the logger to use during execution
+     * @param tablePrefix the prefix of all table names
      */
     public QuartzJDBCDelegate(Logger logger, String tablePrefix, String instanceId) {
         this.logger = logger;
@@ -91,13 +66,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Create new StdJDBCDelegate instance.
      * </p>
      *
-     * @param logger
-     *          the logger to use during execution
-     * @param tablePrefix
-     *          the prefix of all table names
+     * @param logger      the logger to use during execution
+     * @param tablePrefix the prefix of all table names
      */
     public QuartzJDBCDelegate(Logger logger, String tablePrefix, String instanceId,
-                           Boolean useProperties) {
+                              Boolean useProperties) {
         this.logger = logger;
         this.tablePrefix = tablePrefix;
         this.instanceId = instanceId;
@@ -125,14 +98,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert the job detail record.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param newState
-     *          the new state for the triggers
-     * @param oldState1
-     *          the first old state to update
-     * @param oldState2
-     *          the second old state to update
+     * @param conn      the DB Connection
+     * @param newState  the new state for the triggers
+     * @param oldState1 the first old state to update
+     * @param oldState2 the second old state to update
      * @return number of rows updated
      */
     @Override
@@ -158,8 +127,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Get the names of all of the triggers that have misfired.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return an array of <code>{@link
      * org.quartz.utils.Key}</code> objects
      */
@@ -195,10 +163,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select all of the triggers in a given state.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param state
-     *          the state the triggers must be in
+     * @param conn  the DB Connection
+     * @param state the state the triggers must be in
      * @return an array of trigger <code>Key</code> s
      */
     @Override
@@ -260,13 +226,12 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * be returned.
      * </p>
      *
-     * @param conn The DB Connection
-     * @param count The most misfired triggers to return, negative for all
+     * @param conn       The DB Connection
+     * @param count      The most misfired triggers to return, negative for all
      * @param resultList Output parameter.  A List of
-     *      <code>{@link org.quartz.utils.Key}</code> objects.  Must not be null.
-     *
+     *                   <code>{@link org.quartz.utils.Key}</code> objects.  Must not be null.
      * @return Whether there are more misfired triggers left to find beyond
-     *         the given count.
+     * the given count.
      */
     @Override
     public boolean selectMisfiredTriggersInStates(Connection conn, String state1, String state2,
@@ -337,8 +302,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * have misfired.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return an array of <code>{@link
      * org.quartz.utils.Key}</code> objects
      */
@@ -379,7 +343,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * org.quartz.Scheduler}.DEFAULT_RECOVERY_GROUP</code>
      * trigger group.
      * </p>
-     *
+     * <p/>
      * <p>
      * In order to preserve the ordering of the triggers, the fire time will be
      * set from the <code>COL_FIRED_TIME</code> column in the <code>TABLE_FIRED_TRIGGERS</code>
@@ -388,8 +352,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * returned triggers to ensure that they are fired.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return an array of <code>{@link org.quartz.Trigger}</code> objects
      */
     @Override
@@ -446,8 +409,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete all fired triggers.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return the number of rows deleted
      */
     @Override
@@ -487,13 +449,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert the job detail record.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param job
-     *          the job to insert
+     * @param conn the DB Connection
+     * @param job  the job to insert
      * @return number of rows inserted
-     * @throws IOException
-     *           if there were problems serializing the JobDataMap
+     * @throws IOException if there were problems serializing the JobDataMap
      */
     @Override
     public int insertJobDetail(Connection conn, JobDetail job)
@@ -536,13 +495,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the job detail record.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param job
-     *          the job to update
+     * @param conn the DB Connection
+     * @param job  the job to update
      * @return number of rows updated
-     * @throws IOException
-     *           if there were problems serializing the JobDataMap
+     * @throws IOException if there were problems serializing the JobDataMap
      */
     @Override
     public int updateJobDetail(Connection conn, JobDetail job)
@@ -587,12 +543,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Get the names of all of the triggers associated with the given job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the job
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the name of the job
+     * @param groupName the group containing the job
      * @return an array of <code>{@link
      * org.quartz.utils.Key}</code> objects
      */
@@ -629,12 +582,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete all job listeners for the given job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the job
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the name of the job
+     * @param groupName the group containing the job
      * @return the number of rows deleted
      */
     @Override
@@ -657,12 +607,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete the job detail record for the given job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the job
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the name of the job
+     * @param groupName the group containing the job
      * @return the number of rows deleted
      */
     @Override
@@ -688,12 +635,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Check whether or not the given job is stateful.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the job
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the name of the job
+     * @param groupName the group containing the job
      * @return true if the job exists and is stateful, false otherwise
      */
     @Override
@@ -707,7 +651,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
             ps.setString(1, jobName);
             ps.setString(2, groupName);
             rs = ps.executeQuery();
-            if (!rs.next()) { return false; }
+            if (!rs.next()) {
+                return false;
+            }
             return getBoolean(rs, COL_IS_STATEFUL);
         } finally {
             closeResultSet(rs);
@@ -720,12 +666,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Check whether or not the given job exists.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the job
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the name of the job
+     * @param groupName the group containing the job
      * @return true if the job exists, false otherwise
      */
     @Override
@@ -756,10 +699,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the job data map for the given job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param job
-     *          the job to update
+     * @param conn the DB Connection
+     * @param job  the job to update
      * @return the number of rows updated
      */
     @Override
@@ -786,12 +727,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Associate a listener with a job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param job
-     *          the job to associate with the listener
-     * @param listener
-     *          the listener to insert
+     * @param conn     the DB Connection
+     * @param job      the job to associate with the listener
+     * @param listener the listener to insert
      * @return the number of rows inserted
      */
     @Override
@@ -816,12 +754,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Get all of the listeners for a given job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the job name whose listeners are wanted
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the job name whose listeners are wanted
+     * @param groupName the group containing the job
      * @return array of <code>String</code> listener names
      */
     @Override
@@ -856,18 +791,13 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the JobDetail object for a given job name / group name.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the job name whose listeners are wanted
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the job name whose listeners are wanted
+     * @param groupName the group containing the job
      * @return the populated JobDetail object
-     * @throws ClassNotFoundException
-     *           if a class found during deserialization cannot be found or if
-     *           the job class could not be found
-     * @throws IOException
-     *           if deserialization causes an error
+     * @throws ClassNotFoundException if a class found during deserialization cannot be found or if
+     *                                the job class could not be found
+     * @throws IOException            if deserialization causes an error
      */
     @Override
     public JobDetail selectJobDetail(Connection conn, String jobName,
@@ -922,7 +852,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
             throws ClassNotFoundException, IOException, SQLException {
         Map map;
         InputStream is = (InputStream) getJobDetailFromBlob(rs, COL_JOB_DATAMAP);
-        if(is == null) {
+        if (is == null) {
             return null;
         }
         Properties properties = new Properties();
@@ -942,8 +872,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the total number of jobs stored.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return the total number of jobs stored
      */
     @Override
@@ -972,8 +901,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select all of the job group names that are stored.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return an array of <code>String</code> group names
      */
     @Override
@@ -1005,10 +933,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select all of the jobs contained in a given group.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param groupName
-     *          the group containing the jobs
+     * @param conn      the DB Connection
+     * @param groupName the group containing the jobs
      * @return an array of <code>String</code> job names
      */
     @Override
@@ -1046,12 +972,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert the base trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
-     * @param state
-     *          the state that the trigger should be stored in
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
+     * @param state   the state that the trigger should be stored in
      * @return the number of rows inserted
      */
     @Override
@@ -1059,7 +982,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
                              JobDetail jobDetail) throws SQLException, IOException {
 
         ByteArrayOutputStream baos = null;
-        if(trigger.getJobDataMap().size() > 0) {
+        if (trigger.getJobDataMap().size() > 0) {
             baos = serializeJobData(trigger.getJobDataMap());
         }
 
@@ -1075,7 +998,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
             ps.setString(4, trigger.getJobGroup());
             setBoolean(ps, 5, trigger.isVolatile());
             ps.setString(6, trigger.getDescription());
-            if(trigger.getNextFireTime() != null)
+            if (trigger.getNextFireTime() != null)
                 ps.setBigDecimal(7, new BigDecimal(String.valueOf(trigger
                         .getNextFireTime().getTime())));
             else
@@ -1086,9 +1009,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
             }
             ps.setBigDecimal(8, new BigDecimal(String.valueOf(prevFireTime)));
             ps.setString(9, state);
-            if (trigger instanceof SimpleTrigger && ((SimpleTrigger)trigger).hasAdditionalProperties() == false ) {
+            if (trigger instanceof SimpleTrigger && ((SimpleTrigger) trigger).hasAdditionalProperties() == false) {
                 ps.setString(10, TTYPE_SIMPLE);
-            } else if (trigger instanceof CronTrigger && ((CronTrigger)trigger).hasAdditionalProperties() == false ) {
+            } else if (trigger instanceof CronTrigger && ((CronTrigger) trigger).hasAdditionalProperties() == false) {
                 ps.setString(10, TTYPE_CRON);
             } else {
                 ps.setString(10, TTYPE_BLOB);
@@ -1125,10 +1048,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert the simple trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
      * @return the number of rows inserted
      */
     @Override
@@ -1156,10 +1077,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert the cron trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
      * @return the number of rows inserted
      */
     @Override
@@ -1185,10 +1104,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert the blob trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
      * @return the number of rows inserted
      */
     @Override
@@ -1223,12 +1140,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the base trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
-     * @param state
-     *          the state that the trigger should be stored in
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
+     * @param state   the state that the trigger should be stored in
      * @return the number of rows updated
      */
     @Override
@@ -1238,7 +1152,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
         // save some clock cycles by unnecessarily writing job data blob ...
         boolean updateJobData = trigger.getJobDataMap().isDirty();
         ByteArrayOutputStream baos = null;
-        if(updateJobData && trigger.getJobDataMap().size() > 0) {
+        if (updateJobData && trigger.getJobDataMap().size() > 0) {
             baos = serializeJobData(trigger.getJobDataMap());
         }
 
@@ -1248,7 +1162,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
 
 
         try {
-            if(updateJobData) {
+            if (updateJobData) {
                 ps = conn.prepareStatement(rtp(UPDATE_TRIGGER));
             } else {
                 ps = conn.prepareStatement(rtp(UPDATE_TRIGGER_SKIP_DATA));
@@ -1269,10 +1183,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
             }
             ps.setBigDecimal(6, new BigDecimal(String.valueOf(prevFireTime)));
             ps.setString(7, state);
-            if (trigger instanceof SimpleTrigger && ((SimpleTrigger)trigger).hasAdditionalProperties() == false ) {
+            if (trigger instanceof SimpleTrigger && ((SimpleTrigger) trigger).hasAdditionalProperties() == false) {
                 //                updateSimpleTrigger(conn, (SimpleTrigger)trigger);
                 ps.setString(8, TTYPE_SIMPLE);
-            } else if (trigger instanceof CronTrigger && ((CronTrigger)trigger).hasAdditionalProperties() == false ) {
+            } else if (trigger instanceof CronTrigger && ((CronTrigger) trigger).hasAdditionalProperties() == false) {
                 //                updateCronTrigger(conn, (CronTrigger)trigger);
                 ps.setString(8, TTYPE_CRON);
             } else {
@@ -1290,7 +1204,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
             ps.setInt(12, trigger.getMisfireInstruction());
             ps.setInt(13, trigger.getPriority());
 
-            if(updateJobData) {
+            if (updateJobData) {
                 setBytes(ps, 14, baos);
                 ps.setString(15, trigger.getName());
                 ps.setString(16, trigger.getGroup());
@@ -1321,10 +1235,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the simple trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
      * @return the number of rows updated
      */
     @Override
@@ -1353,10 +1265,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the cron trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
      * @return the number of rows updated
      */
     @Override
@@ -1381,10 +1291,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the blob trigger data.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger to insert
+     * @param conn    the DB Connection
+     * @param trigger the trigger to insert
      * @return the number of rows updated
      */
     @Override
@@ -1422,12 +1330,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Check whether or not a trigger exists.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return true if the trigger exists, false otherwise
      */
     @Override
@@ -1458,14 +1363,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the state for a given trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
-     * @param state
-     *          the new state for the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
+     * @param state       the new state for the trigger
      * @return the number of rows updated
      */
     @Override
@@ -1490,20 +1391,13 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * given old states.
      * </p>
      *
-     * @param conn
-     *          the DB connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
-     * @param newState
-     *          the new state for the trigger
-     * @param oldState1
-     *          one of the old state the trigger must be in
-     * @param oldState2
-     *          one of the old state the trigger must be in
-     * @param oldState3
-     *          one of the old state the trigger must be in
+     * @param conn        the DB connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
+     * @param newState    the new state for the trigger
+     * @param oldState1   one of the old state the trigger must be in
+     * @param oldState2   one of the old state the trigger must be in
+     * @param oldState3   one of the old state the trigger must be in
      * @return int the number of rows updated
      * @throws SQLException
      */
@@ -1555,18 +1449,12 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * are in one of the given old states.
      * </p>
      *
-     * @param conn
-     *          the DB connection
-     * @param groupName
-     *          the group containing the trigger
-     * @param newState
-     *          the new state for the trigger
-     * @param oldState1
-     *          one of the old state the trigger must be in
-     * @param oldState2
-     *          one of the old state the trigger must be in
-     * @param oldState3
-     *          one of the old state the trigger must be in
+     * @param conn      the DB connection
+     * @param groupName the group containing the trigger
+     * @param newState  the new state for the trigger
+     * @param oldState1 one of the old state the trigger must be in
+     * @param oldState2 one of the old state the trigger must be in
+     * @param oldState3 one of the old state the trigger must be in
      * @return int the number of rows updated
      * @throws SQLException
      */
@@ -1597,16 +1485,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * old state.
      * </p>
      *
-     * @param conn
-     *          the DB connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
-     * @param newState
-     *          the new state for the trigger
-     * @param oldState
-     *          the old state the trigger must be in
+     * @param conn        the DB connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
+     * @param newState    the new state for the trigger
+     * @param oldState    the old state the trigger must be in
      * @return int the number of rows updated
      * @throws SQLException
      */
@@ -1635,14 +1518,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * they are in the given old state.
      * </p>
      *
-     * @param conn
-     *          the DB connection
-     * @param groupName
-     *          the group containing the triggers
-     * @param newState
-     *          the new state for the trigger group
-     * @param oldState
-     *          the old state the triggers must be in
+     * @param conn      the DB connection
+     * @param groupName the group containing the triggers
+     * @param newState  the new state for the trigger group
+     * @param oldState  the old state the triggers must be in
      * @return int the number of rows updated
      * @throws SQLException
      */
@@ -1670,14 +1549,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update the states of all triggers associated with the given job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the job
-     * @param groupName
-     *          the group containing the job
-     * @param state
-     *          the new state for the triggers
+     * @param conn      the DB Connection
+     * @param jobName   the name of the job
+     * @param groupName the group containing the job
+     * @param state     the new state for the triggers
      * @return the number of rows updated
      */
     @Override
@@ -1722,12 +1597,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete all of the listeners associated with a given trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger whose listeners will be deleted
-     * @param groupName
-     *          the name of the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger whose listeners will be deleted
+     * @param groupName   the name of the group containing the trigger
      * @return the number of rows deleted
      */
     @Override
@@ -1750,12 +1622,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Associate a listener with the given trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger
-     * @param listener
-     *          the name of the listener to associate with the trigger
+     * @param conn     the DB Connection
+     * @param trigger  the trigger
+     * @param listener the name of the listener to associate with the trigger
      * @return the number of rows inserted
      */
     @Override
@@ -1780,12 +1649,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the listeners associated with a given trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return array of <code>String</code> trigger listener names
      */
     @Override
@@ -1819,12 +1685,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete the simple trigger data for a trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the number of rows deleted
      */
     @Override
@@ -1848,12 +1711,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete the cron trigger data for a trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the number of rows deleted
      */
     @Override
@@ -1877,12 +1737,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete the cron trigger data for a trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the number of rows deleted
      */
     @Override
@@ -1906,12 +1763,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete the base trigger data for a trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the number of rows deleted
      */
     @Override
@@ -1935,12 +1789,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the number of triggers associated with a given job.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the job
-     * @param groupName
-     *          the group containing the job
+     * @param conn      the DB Connection
+     * @param jobName   the name of the job
+     * @param groupName the group containing the job
      * @return the number of triggers for the given job
      */
     @Override
@@ -1971,14 +1822,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the job to which the trigger is associated.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the <code>{@link org.quartz.JobDetail}</code> object
-     *         associated with the given trigger
+     * associated with the given trigger
      * @throws SQLException
      * @throws ClassNotFoundException
      */
@@ -2022,14 +1870,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the triggers for a job
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param jobName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn      the DB Connection
+     * @param jobName   the name of the trigger
+     * @param groupName the group containing the trigger
      * @return an array of <code>(@link org.quartz.Trigger)</code> objects
-     *         associated with a given job.
+     * associated with a given job.
      * @throws SQLException
      */
     @Override
@@ -2051,7 +1896,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
                 Trigger t = selectTrigger(conn,
                         rs.getString(COL_TRIGGER_NAME),
                         rs.getString(COL_TRIGGER_GROUP));
-                if(t != null) {
+                if (t != null) {
                     trigList.add(t);
                 }
             }
@@ -2120,12 +1965,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select a trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the <code>{@link org.quartz.Trigger}</code> object
      */
     @Override
@@ -2273,12 +2115,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select a trigger's JobDataMap.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the <code>{@link org.quartz.JobDataMap}</code> of the Trigger,
      * never null, but possibly empty.
      */
@@ -2328,12 +2167,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select a trigger' state value.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return the <code>{@link org.quartz.Trigger}</code> object
      */
     @Override
@@ -2369,12 +2205,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select a trigger' status (state & next fire time).
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param triggerName
-     *          the name of the trigger
-     * @param groupName
-     *          the group containing the trigger
+     * @param conn        the DB Connection
+     * @param triggerName the name of the trigger
+     * @param groupName   the group containing the trigger
      * @return a <code>TriggerStatus</code> object, or null
      */
     @Override
@@ -2420,8 +2253,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the total number of triggers stored.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return the total number of triggers stored
      */
     @Override
@@ -2450,8 +2282,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select all of the trigger group names that are stored.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return an array of <code>String</code> group names
      */
     @Override
@@ -2483,10 +2314,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select all of the triggers contained in a given group.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param groupName
-     *          the group containing the triggers
+     * @param conn      the DB Connection
+     * @param groupName the group containing the triggers
      * @return an array of <code>String</code> trigger names
      */
     @Override
@@ -2611,15 +2440,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert a new calendar.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param calendarName
-     *          the name for the new calendar
-     * @param calendar
-     *          the calendar
+     * @param conn         the DB Connection
+     * @param calendarName the name for the new calendar
+     * @param calendar     the calendar
      * @return the number of rows inserted
-     * @throws IOException
-     *           if there were problems serializing the calendar
+     * @throws IOException if there were problems serializing the calendar
      */
     @Override
     public int insertCalendar(Connection conn, String calendarName,
@@ -2644,15 +2469,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Update a calendar.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param calendarName
-     *          the name for the new calendar
-     * @param calendar
-     *          the calendar
+     * @param conn         the DB Connection
+     * @param calendarName the name for the new calendar
+     * @param calendar     the calendar
      * @return the number of rows updated
-     * @throws IOException
-     *           if there were problems serializing the calendar
+     * @throws IOException if there were problems serializing the calendar
      */
     @Override
     public int updateCalendar(Connection conn, String calendarName,
@@ -2677,10 +2498,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Check whether or not a calendar exists.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param calendarName
-     *          the name of the calendar
+     * @param conn         the DB Connection
+     * @param calendarName the name of the calendar
      * @return true if the trigger exists, false otherwise
      */
     @Override
@@ -2710,16 +2529,12 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select a calendar.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param calendarName
-     *          the name of the calendar
+     * @param conn         the DB Connection
+     * @param calendarName the name of the calendar
      * @return the Calendar
-     * @throws ClassNotFoundException
-     *           if a class found during deserialization cannot be found be
-     *           found
-     * @throws IOException
-     *           if there were problems deserializing the calendar
+     * @throws ClassNotFoundException if a class found during deserialization cannot be found be
+     *                                found
+     * @throws IOException            if there were problems deserializing the calendar
      */
     @Override
     public Calendar selectCalendar(Connection conn, String calendarName)
@@ -2752,10 +2567,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Check whether or not a calendar is referenced by any triggers.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param calendarName
-     *          the name of the calendar
+     * @param conn         the DB Connection
+     * @param calendarName the name of the calendar
      * @return true if any triggers reference the calendar, false otherwise
      */
     @Override
@@ -2784,10 +2597,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete a calendar.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param calendarName
-     *          the name of the trigger
+     * @param conn         the DB Connection
+     * @param calendarName the name of the trigger
      * @return the number of rows deleted
      */
     @Override
@@ -2810,8 +2621,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the total number of calendars stored.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return the total number of calendars stored
      */
     @Override
@@ -2841,8 +2651,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select all of the stored calendars.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return an array of <code>String</code> calendar names
      */
     @Override
@@ -2878,10 +2687,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the next time that a trigger will be fired.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
+     * @param conn the DB Connection
      * @return the next fire time, or 0 if no trigger will be fired
-     *
      * @deprecated Does not account for misfires.
      */
     @Override
@@ -2909,13 +2716,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Select the trigger that will be fired at the given fire time.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param fireTime
-     *          the time that the trigger will be fired
+     * @param conn     the DB Connection
+     * @param fireTime the time that the trigger will be fired
      * @return a <code>{@link org.quartz.utils.Key}</code> representing the
-     *         trigger that will be fired at the given fire time, or null if no
-     *         trigger will be fired at that time
+     * trigger that will be fired at the given fire time, or null if no
+     * trigger will be fired at that time
      */
     @Override
     public Key selectTriggerForFireTime(Connection conn, long fireTime)
@@ -2946,13 +2751,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * in ascending order of fire time, and then descending by priority.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param noLaterThan
-     *          highest value of <code>getNextFireTime()</code> of the triggers (exclusive)
-     * @param noEarlierThan
-     *          highest value of <code>getNextFireTime()</code> of the triggers (inclusive)
-     *
+     * @param conn          the DB Connection
+     * @param noLaterThan   highest value of <code>getNextFireTime()</code> of the triggers (exclusive)
+     * @param noEarlierThan highest value of <code>getNextFireTime()</code> of the triggers (inclusive)
      * @return A (never null, possibly empty) list of the identifiers (Key objects) of the next triggers to be fired.
      */
     @Override
@@ -2992,12 +2793,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Insert a fired trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param trigger
-     *          the trigger
-     * @param state
-     *          the state that the trigger should be stored in
+     * @param conn    the DB Connection
+     * @param trigger the trigger
+     * @param state   the state that the trigger should be stored in
      * @return the number of rows inserted
      */
     @Override
@@ -3188,7 +2986,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * <p>
      * Select the distinct instance names of all fired-trigger records.
      * </p>
-     *
+     * <p/>
      * <p>
      * This is useful when trying to identify orphaned fired triggers (a
      * fired trigger without a scheduler state record.)
@@ -3223,10 +3021,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * Delete a fired trigger.
      * </p>
      *
-     * @param conn
-     *          the DB Connection
-     * @param entryId
-     *          the fired trigger entry to delete
+     * @param conn    the DB Connection
+     * @param entryId the fired trigger entry to delete
      * @return the number of rows deleted
      */
     @Override
@@ -3366,12 +3162,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * "{0}" with the table prefix.
      * </p>
      *
-     * @param query
-     *          the unsubstitued query
+     * @param query the unsubstitued query
      * @return the query, with proper table prefix substituted
      */
     protected final String rtp(String query) {
-        return MessageFormat.format(query, new Object[]{tablePrefix,  "'" + systemName + "'"});
+        return MessageFormat.format(query, new Object[]{tablePrefix, "'" + instanceId + "'"});
     }
 
     /**
@@ -3380,11 +3175,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * version of an Object.
      * </p>
      *
-     * @param obj
-     *          the object to serialize
+     * @param obj the object to serialize
      * @return the serialized ByteArrayOutputStream
-     * @throws IOException
-     *           if serialization causes an error
+     * @throws IOException if serialization causes an error
      */
     protected ByteArrayOutputStream serializeObject(Object obj)
             throws IOException {
@@ -3403,11 +3196,9 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * version of a <code>{@link org.quartz.JobDataMap}</code>.
      * </p>
      *
-     * @param data
-     *          the JobDataMap to serialize
+     * @param data the JobDataMap to serialize
      * @return the serialized ByteArrayOutputStream
-     * @throws IOException
-     *           if serialization causes an error
+     * @throws IOException if serialization causes an error
      */
     protected ByteArrayOutputStream serializeJobData(JobDataMap data)
             throws IOException {
@@ -3433,8 +3224,8 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * null if all values are serializable.
      */
     protected Object getKeyOfNonSerializableValue(Map data) {
-        for (Iterator entryIter = data.entrySet().iterator(); entryIter.hasNext();) {
-            Map.Entry entry = (Map.Entry)entryIter.next();
+        for (Iterator entryIter = data.entrySet().iterator(); entryIter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) entryIter.next();
 
             ByteArrayOutputStream baos = null;
             try {
@@ -3443,7 +3234,10 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
                 return entry.getKey();
             } finally {
                 if (baos != null) {
-                    try { baos.close(); } catch (IOException ignore) {}
+                    try {
+                        baos.close();
+                    } catch (IOException ignore) {
+                    }
                 }
             }
         }
@@ -3480,19 +3274,19 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
     protected Properties convertToProperty(Map data) throws IOException {
         Properties properties = new Properties();
 
-        for (Iterator entryIter = data.entrySet().iterator(); entryIter.hasNext();) {
-            Map.Entry entry = (Map.Entry)entryIter.next();
+        for (Iterator entryIter = data.entrySet().iterator(); entryIter.hasNext(); ) {
+            Map.Entry entry = (Map.Entry) entryIter.next();
 
             Object key = entry.getKey();
             Object val = (entry.getValue() == null) ? "" : entry.getValue();
 
-            if(!(key instanceof String)) {
+            if (!(key instanceof String)) {
                 throw new IOException("JobDataMap keys/values must be Strings "
                         + "when the 'useProperties' property is set. "
                         + " offending Key: " + key);
             }
 
-            if(!(val instanceof String)) {
+            if (!(val instanceof String)) {
                 throw new IOException("JobDataMap values must be Strings "
                         + "when the 'useProperties' property is set. "
                         + " Key of offending value: " + key);
@@ -3511,15 +3305,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * JDBC <code>java.sql.Blob</code> operations.
      * </p>
      *
-     * @param rs
-     *          the result set, already queued to the correct row
-     * @param colName
-     *          the column name for the BLOB
+     * @param rs      the result set, already queued to the correct row
+     * @param colName the column name for the BLOB
      * @return the deserialized Object from the ResultSet BLOB
-     * @throws ClassNotFoundException
-     *           if a class found during deserialization cannot be found
-     * @throws IOException
-     *           if deserialization causes an error
+     * @throws ClassNotFoundException if a class found during deserialization cannot be found
+     * @throws IOException            if deserialization causes an error
      */
     protected Object getObjectFromBlob(ResultSet rs, String colName)
             throws ClassNotFoundException, IOException, SQLException {
@@ -3531,7 +3321,7 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
 
             if (null != binaryInput) {
                 if (binaryInput instanceof ByteArrayInputStream
-                        && ((ByteArrayInputStream) binaryInput).available() == 0 ) {
+                        && ((ByteArrayInputStream) binaryInput).available() == 0) {
                     //do nothing
                 } else {
                     ObjectInputStream in = new ObjectInputStream(binaryInput);
@@ -3604,15 +3394,11 @@ public class QuartzJDBCDelegate implements DriverDelegate, QuartzJDBCConstants {
      * uses standard JDBC <code>java.sql.Blob</code> operations.
      * </p>
      *
-     * @param rs
-     *          the result set, already queued to the correct row
-     * @param colName
-     *          the column name for the BLOB
+     * @param rs      the result set, already queued to the correct row
+     * @param colName the column name for the BLOB
      * @return the deserialized Object from the ResultSet BLOB
-     * @throws ClassNotFoundException
-     *           if a class found during deserialization cannot be found
-     * @throws IOException
-     *           if deserialization causes an error
+     * @throws ClassNotFoundException if a class found during deserialization cannot be found
+     * @throws IOException            if deserialization causes an error
      */
     protected Object getJobDetailFromBlob(ResultSet rs, String colName)
             throws ClassNotFoundException, IOException, SQLException {
